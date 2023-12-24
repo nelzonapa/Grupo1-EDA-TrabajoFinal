@@ -14,7 +14,7 @@ enum class axis_type
 template <size_t dimensions>
 struct RStarBoundingBox
 {
-    vector<int> max_edges, min_edges; //<borders
+    vector<double> max_edges, min_edges; //<borders
     
     RStarBoundingBox() : max_edges(dimensions), min_edges(dimensions)
     {

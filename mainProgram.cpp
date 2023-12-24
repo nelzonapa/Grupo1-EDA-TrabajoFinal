@@ -14,6 +14,7 @@ struct PatientData
 {
     vector<string> characteristics; // Para almacenar las características del paciente
     vector<string> dataSubset;      // Para almacenar un subconjunto específico de datos del paciente
+    vector<int> numberCharacteristica;
 };
 
 ostream &operator<<(ostream &out, const PatientData &paciente)
@@ -21,6 +22,7 @@ ostream &operator<<(ostream &out, const PatientData &paciente)
     for (int i = 0; i < paciente.characteristics.size(); i++)
     {
         out << "|\t" << paciente.characteristics[i] << "|\t";
+        out <<"(" << paciente.numberCharacteristica[i] <<")";
     }
     out << "\n";
 
@@ -33,20 +35,20 @@ ostream &operator<<(ostream &out, const PatientData &paciente)
     return out;
 }
 
-RStarBoundingBox<3> createBox3D(int testResult, double ageQuantile, double hemoglobin, 
+RStarBoundingBox<3> createBox3D(double testResult, double ageQuantile, double hemoglobin, 
 double platelets, double meanPlateletVolume, double mchc, double leukocytes, 
 double basophils, double eosinophils, double monocytes, double crp)
 {
     RStarBoundingBox<3> box;  // Creamos la caja con tres tamaños diferentes
 
     // Estos valores representan los tamaños mínimos de la caja en cada dimensión
-    box.min_edges[0] = ageQuantile;
+    box.min_edges[0] = testResult;
     box.min_edges[1] = ageQuantile;
     box.min_edges[2] = hemoglobin;
 
     // Al principio, los tamaños máximos son iguales a los tamaños mínimos,
     // así que la caja tiene el mismo tamaño en todas las dimensiones por ahora
-    box.max_edges[0] = ageQuantile;
+    box.max_edges[0] = testResult;
     box.min_edges[1] = ageQuantile;
     box.max_edges[2] = hemoglobin;
 
@@ -110,41 +112,73 @@ double basophils, double eosinophils, double monocytes, double crp)
 
 
 
-PatientData csvColumnsData(const string &line, int n)
+PatientData csvImportantData(const string &line0, int n, const string &line1)
 {
     PatientData patient;
-    stringstream ss(line);
-    string token;
+    stringstream ss1(line0);
+    string token1;
 
-    int count = 0;
-    while (getline(ss, token, ',') && count < n)
+    stringstream ss2(line1);
+    string token2;
+
+    int cont=0;
+    getline(ss1, token1, ',');
+    while (getline(ss2, token2, ','))
     {
-        patient.characteristics.push_back(token); // Almacena en el primer vector
-        count++;
+        if (token2==token1)
+        {
+            patient.numberCharacteristica.push_back(cont); 
+            getline(ss1, token1, ',');
+            patient.characteristics.push_back(token1);
+        }
+        cont++;
     }
 
     return patient;
 }
 
+
 void csvDataPatient(const string &line2, int n, PatientData &patient,RStarTree<PatientData, 3, 10, 20> &rstarTree)
 {
     stringstream ss2(line2);
-    string token;
     string token2;
+
+    //avoid repeat data
     patient.dataSubset.clear();
-    int count = 0;
-    while (getline(ss2, token2, ',') && count < n)
+
+    int i = 0;
+    int cont = 0;
+    while (getline(ss2, token2, ','))
     {
-        patient.dataSubset.push_back(token2); // Almacena en el segundo vector
-        count++;
+        if ((patient.numberCharacteristica[cont])==i)
+        {
+            if (token2=="\"positive\"" )
+            {
+                patient.dataSubset.push_back("1");
+                cont++;
+            }
+            else if (token2=="\"negative\"")
+            {
+                patient.dataSubset.push_back("0");
+                cont++;
+            }
+            else
+            {
+                token2=token2.substr(1, token2.size() - 2);
+                patient.dataSubset.push_back(token2);
+                cont++;
+            }
+            
+        }
+        i++;
     }
     
-    RStarBoundingBox<3> box=createBox3D(stoi(patient.dataSubset[0]),stoi(patient.dataSubset[1]),
-    stoi(patient.dataSubset[2]),stoi(patient.dataSubset[3]),stoi(patient.dataSubset[4]),
-    stoi(patient.dataSubset[5]),stoi(patient.dataSubset[6]),stoi(patient.dataSubset[7]),
-    stoi(patient.dataSubset[8]),stoi(patient.dataSubset[9]),stoi(patient.dataSubset[10]));
-    
-    rstarTree.insert(patient, box);
+    // RStarBoundingBox<3> box=createBox3D(std::stod(patient.dataSubset[0]),std::stod(patient.dataSubset[1]),
+    // std::stod(patient.dataSubset[2]),std::stod(patient.dataSubset[3]),std::stod(patient.dataSubset[4]),
+    // std::stod(patient.dataSubset[5]),std::stod(patient.dataSubset[6]),std::stod(patient.dataSubset[7]),
+    // std::stod(patient.dataSubset[8]),std::stod(patient.dataSubset[9]),std::stod(patient.dataSubset[10]));
+    // cout << "p" << endl;
+    // rstarTree.insert(patient, box);
 
 
 }
@@ -158,17 +192,19 @@ int main()
 
     RStarTree<PatientData, 3, 10, 20> rstarTree;
 
-
+    getline(file0,line0);
     getline(file1, line1);
-    PatientData patient = csvColumnsData(line1,3);
+    PatientData patient = csvImportantData(line0,11, line1);
+
+    //cout << patient << endl;
 
     while (getline(file2, line2))
     {
-        csvDataPatient(line2,3,patient, rstarTree);
+        csvDataPatient(line2,11,patient, rstarTree);
     }
     
     // cout << "p" << endl;
-    // cout << patient << endl;
+    cout << patient << endl;
 
     //rstarTree.print_tree(rstarTree.get_root(),0);
 
