@@ -151,9 +151,9 @@ void csvDataPatient(const string &line2, int n, PatientData &patient,RStarTree<P
 
 int main()
 {
-    ifstream file0("./importantColumns.csv");
-    ifstream file1("./dataColumn.csv");
-    ifstream file2("./covid_DB.csv");
+    ifstream file0("./Files/importantColumns.csv");
+    ifstream file1("./Files/dataColumn.csv");
+    ifstream file2("./Files/covid_DB.csv");
     string line0, line1, line2;
 
     RStarTree<PatientData, 3, 10, 20> rstarTree;
