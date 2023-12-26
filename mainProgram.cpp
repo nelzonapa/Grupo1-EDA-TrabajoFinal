@@ -167,6 +167,16 @@ void csvDataPatient(const string &line2, int n, PatientData &patient,RStarTree<P
                 patient.dataSubset.push_back("0");
                 cont++;
             }
+            else if(token2 =="\"detected\"")
+            {
+                patient.dataSubset.push_back("1");
+                cont++;
+            }
+            else if(token2 =="\"not_detected\"")
+            {
+                patient.dataSubset.push_back("0");
+                cont++;
+            }
             else
             {
                 token2=token2.substr(1, token2.size() - 2);
@@ -181,41 +191,52 @@ void csvDataPatient(const string &line2, int n, PatientData &patient,RStarTree<P
 
 }
 
-int main()
-{
-    ifstream file0("./Files/importantColumns.csv");
-    ifstream file1("./Files/dataColumn.csv");
-    ifstream file2("./Files/covid_DB.csv");
-    string line0, line1, line2;
+void menu2()
+{   
 
     RStarTree<PatientData, 3, 10, 20> rstarTree;
 
-    getline(file0,line0);
-    getline(file1, line1);
-    PatientData patient = csvImportantData(line0,11, line1);
+    ifstream file2("./Files/covid_DB.csv");
+    string line0, line1, line2;
+
 
     //cout << patient << endl;
-
     while (getline(file2, line2))
     {
+        cout<<"$$$$$$$$$$$$$$$$"<<endl;
+        ifstream file0("./Files/importantColumns.csv");
+        ifstream file1("./Files/dataColumn.csv");
+        getline(file0,line0);
+        getline(file1, line1);
+        PatientData patient = csvImportantData(line0,11, line1);
+        file0.close();
+        file1.close();
+
+
         csvDataPatient(line2,11,patient, rstarTree);
-    }
-    // for (int i = 0; i < 11; i++)
-    // {
-    //     cout<<"$ "<<patient.dataSubset[i]<<endl;
-    // }
+        cout<<patient<<endl;
     
-    RStarBoundingBox<3> box=createBox3D(stod(patient.dataSubset[0]),stod(patient.dataSubset[1]),
-    stod(patient.dataSubset[2]),stod(patient.dataSubset[3]),stod(patient.dataSubset[4]),
-    stod(patient.dataSubset[5]),stod(patient.dataSubset[6]),stod(patient.dataSubset[7]),
-    stod(patient.dataSubset[8]),stod(patient.dataSubset[9]),stod(patient.dataSubset[10]));
-    // cout << "p2" << endl;
+        RStarBoundingBox<3> box=createBox3D(stod(patient.dataSubset[0]),stod(patient.dataSubset[1]),
+        stod(patient.dataSubset[2]),stod(patient.dataSubset[3]),stod(patient.dataSubset[4]),
+        stod(patient.dataSubset[5]),stod(patient.dataSubset[6]),stod(patient.dataSubset[7]),
+        stod(patient.dataSubset[8]),stod(patient.dataSubset[9]),stod(patient.dataSubset[10]));
+        // cout << "p2" << endl;
 
-    // cout<<patient<<endl;
-    rstarTree.insert(patient, box);
-    // cout << "p3" << endl;
+        // cout<<patient<<endl;
+        rstarTree.insert(patient, box);
 
+        
+        patient.dataSubset.clear();
+        patient.characteristics.clear();
+        patient.numberCharacteristica.clear();
+        box.reset();
+        // cout << "p3" << endl;
+    }
+    file2.close();
     rstarTree.print_tree(rstarTree.get_root(),0);
+}
 
+int main(){
+    menu2();
     return 0;
 }
