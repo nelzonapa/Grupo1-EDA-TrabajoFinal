@@ -3,240 +3,107 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <string>
-
 
 using namespace std;
 
-
-
-struct PatientData
+struct Paciente
 {
-    vector<string> characteristics; // Para almacenar las características del paciente
-    vector<string> dataSubset;      // Para almacenar un subconjunto específico de datos del paciente
-    vector<int> numberCharacteristica;
+    double a, b, c, d, e, f, g, h, i, j, k;
 };
 
-ostream &operator<<(ostream &out, const PatientData &paciente)
+std::ostream& operator<<(std::ostream& out, const Paciente& point) 
 {
-    for (int i = 0; i < paciente.characteristics.size(); i++)
-    {
-        out << "|" << paciente.characteristics[i] << "|\t";
-        // out <<"(" << paciente.numberCharacteristica[i] <<")";
-    }
-    out << "\n";
-
-    for (int i = 0; i < paciente.dataSubset.size(); i++)
-    {
-        out << "" << paciente.dataSubset[i] << "\t";
-    }
-    out << "\n";
-
+    out << "(" << point.a << ", " << point.b << ", " << point.c
+    << "(" << point.d << ", " << point.e << ", " << point.f 
+    << "(" << point.g << ", " << point.h << ", " << point.i 
+    << "(" << point.j << ", " << point.k << ")";
     return out;
 }
 
-RStarBoundingBox<3> createBox3D(double testResult, double ageQuantile, double hemoglobin, 
-double platelets, double meanPlateletVolume, double mchc, double leukocytes, 
-double basophils, double eosinophils, double monocytes, double crp)
+// Función para crear una caja tridimensional
+RStarBoundingBox<3> createBox3D(int a, int b, int c, int w, int h, int d) 
 {
-    RStarBoundingBox<3> box;  // Creamos la caja con tres tamaños diferentes
-
-    // Estos valores representan los tamaños mínimos de la caja en cada dimensión
-    box.min_edges[0] = testResult;
-    box.min_edges[1] = ageQuantile;
-    box.min_edges[2] = hemoglobin;
-    
-    // Al principio, los tamaños máximos son iguales a los tamaños mínimos,
-    // así que la caja tiene el mismo tamaño en todas las dimensiones por ahora
-    box.max_edges[0] = testResult;
-    box.max_edges[1] = ageQuantile;
-    box.max_edges[2] = hemoglobin;
-
-    // Ahora, ajustaremos el tamaño de la caja en cada dimensión basándonos en los valores
-
-    // Hematocrit
-    box.min_edges[3] = platelets;
-    box.max_edges[3] = platelets;
-
-    // Mean platelet volume
-    if (mchc < 0) {
-        box.min_edges[4] = mchc;
-    } else {
-        box.max_edges[4] = mchc;
-    }
-    // Mean platelet volume
-    if (meanPlateletVolume < 0) {
-        box.min_edges[5] = meanPlateletVolume;
-    } else {
-        box.max_edges[5] = meanPlateletVolume;
-    }
-
-    // Leukocytes
-    if (leukocytes < 0) {
-        box.min_edges[6] = leukocytes;
-    } else {
-        box.max_edges[6] = leukocytes;
-    }
-
-    // Basophils
-    if (basophils < 0) {
-        box.min_edges[7] = basophils;
-    } else {
-        box.max_edges[7] = basophils;
-    }
-
-    // Eosinophils
-    if (eosinophils < 0) {
-        box.min_edges[8] = eosinophils;
-    } else {
-        box.max_edges[8] = eosinophils;
-    }
-
-    // Monocytes
-    if (monocytes < 0) {
-        box.min_edges[9] = monocytes;
-    } else {
-        box.max_edges[9] = monocytes;
-    }
-
-    // Proteina C reativa mg/dL
-    if (crp < 0) {
-        box.min_edges[10] = crp;
-    } else {
-        box.max_edges[10] = crp;
-    }
-
-    
-    return box; // Devolvemos la caja con sus tamaños ajustados.
+    RStarBoundingBox<3> box;
+    box.min_edges[0] = a;
+    box.min_edges[1] = b;
+    box.min_edges[2] = c;
+    box.max_edges[0] = a + w;
+    box.max_edges[1] = b + h;
+    box.max_edges[2] = c + d;
+    return box;
 }
 
-
-
-PatientData csvImportantData(const string &line0, int n, const string &line1)
+// Función para parsear una línea del archivo CSV b obtener un punto 3D
+Paciente leerCSVLine(const string& line) 
 {
-    PatientData patient;
-    stringstream ss1(line0);
-    string token1;
-
-    stringstream ss2(line1);
-    string token2;
-
-    int cont=0;
-    getline(ss1, token1, ',');
-    while (getline(ss2, token2, ','))
-    {
-        if (token2==token1)
-        {
-            patient.numberCharacteristica.push_back(cont); 
-            getline(ss1, token1, ',');
-            patient.characteristics.push_back(token1);
-        }
-        cont++;
-    }
-
-    return patient;
+    Paciente caractPaciente;
+    stringstream ss(line);
+    string token;
+    getline(ss, token, ',');
+    caractPaciente.a = stod(token);
+    getline(ss, token, ',');
+    caractPaciente.b = stod(token);
+    getline(ss, token, ',');
+    caractPaciente.c = stod(token);
+    getline(ss, token, ',');
+    caractPaciente.d = stod(token);
+    getline(ss, token, ',');
+    caractPaciente.e = stod(token);
+    getline(ss, token, ',');
+    caractPaciente.f = stod(token);
+    getline(ss, token, ',');
+    caractPaciente.g = stod(token);
+    getline(ss, token, ',');
+    caractPaciente.h = stod(token);
+    getline(ss, token, ',');
+    caractPaciente.i = stod(token);
+    getline(ss, token, ',');
+    caractPaciente.j = stod(token);
+    getline(ss, token, ',');
+    caractPaciente.k = stod(token);
+    return caractPaciente;
 }
 
-
-void csvDataPatient(const string &line2, int n, PatientData &patient,RStarTree<PatientData, 3, 10, 20> &rstarTree)
+int main() 
 {
-    stringstream ss2(line2);
-    string token2;
+    // Crear un árbol R* para puntos 3D
+    RStarTree<Paciente, 3, 10, 20> rstarTree; // Dimensiones: 3, Min Child: 10, Max Child: 20
 
-    //avoid repeat data
-    patient.dataSubset.clear();
+    ifstream file("./Files/covid_DB_datos_importantes_completos_double.csv");
+    string line;
+    getline(file, line);
 
-    int i = 0;
-    int cont = 0;
-    while (getline(ss2, token2, ','))
-    {
-        if ((patient.numberCharacteristica[cont])==i)
-        {
-            if (token2=="\"positive\"" )
-            {
-                patient.dataSubset.push_back("1");
-                cont++;
-            }
-            else if (token2=="\"negative\"")
-            {
-                patient.dataSubset.push_back("0");
-                cont++;
-            }
-            else if(token2 =="\"\"")
-            {
-                patient.dataSubset.push_back("0");
-                cont++;
-            }
-            else if(token2 =="\"detected\"")
-            {
-                patient.dataSubset.push_back("1");
-                cont++;
-            }
-            else if(token2 =="\"not_detected\"")
-            {
-                patient.dataSubset.push_back("0");
-                cont++;
-            }
-            else
-            {
-                token2=token2.substr(1, token2.size() - 2);
-                patient.dataSubset.push_back(token2);
-                cont++;
-            }
-            
-        }
-        i++;
+    while (getline(file, line)) {
+        //Parsear la línea b obtener un punto 3D
+        Paciente caracteristicaPaciente = leerCSVLine(line);
+
+        //Crear la caja tridimensional alrededor del punto
+        //Solo sumamos 1
+        RStarBoundingBox<3> box = createBox3D(caracteristicaPaciente.a, caracteristicaPaciente.b, caracteristicaPaciente.c, 1, 1, 1);
+
+        rstarTree.insert(caracteristicaPaciente, box);
     }
 
+    //rstarTree.print_tree((rstarTree.get_root()),0);
 
-}
+    //Eliminacion de datos
 
-void menu2()
-{   
+    auto box2 = createBox3D(1,15,0,1,1,1);
+    rstarTree.delete_objects_in_area(box2);
+    //rstarTree.print_tree((rstarTree.get_root()),0);
 
-    RStarTree<PatientData, 3, 10, 20> rstarTree;
+    // auto box3 = createBox3D(1,15,0,1,3,2);
+    // rstarTree.delete_objects_in_area(box3);
+    rstarTree.print_tree((rstarTree.get_root()),0);
 
-    ifstream file2("./Files/covid_DB.csv");
-    string line0, line1, line2;
 
-
-    //cout << patient << endl;
-    while (getline(file2, line2))
+    auto areafind = createBox3D(1,15,0,1,3,2);
+    auto structure_res = rstarTree.find_objects_in_area(areafind);
+    for (int i = 0; i < structure_res.size(); i++)
     {
-        cout<<"$$$$$$$$$$$$$$$$"<<endl;
-        ifstream file0("./Files/importantColumns.csv");
-        ifstream file1("./Files/dataColumn.csv");
-        getline(file0,line0);
-        getline(file1, line1);
-        PatientData patient = csvImportantData(line0,11, line1);
-        file0.close();
-        file1.close();
-
-
-        csvDataPatient(line2,11,patient, rstarTree);
-        cout<<patient<<endl;
-    
-        RStarBoundingBox<3> box=createBox3D(stod(patient.dataSubset[0]),stod(patient.dataSubset[1]),
-        stod(patient.dataSubset[2]),stod(patient.dataSubset[3]),stod(patient.dataSubset[4]),
-        stod(patient.dataSubset[5]),stod(patient.dataSubset[6]),stod(patient.dataSubset[7]),
-        stod(patient.dataSubset[8]),stod(patient.dataSubset[9]),stod(patient.dataSubset[10]));
-        // cout << "p2" << endl;
-
-        // cout<<patient<<endl;
-        rstarTree.insert(patient, box);
-
-        
-        patient.dataSubset.clear();
-        patient.characteristics.clear();
-        patient.numberCharacteristica.clear();
-        box.reset();
-        // cout << "p3" << endl;
+        cout<<"$$$$$$$$"<<endl;
+        cout<<structure_res[i].get_value()<<endl;
     }
-    file2.close();
-    rstarTree.print_tree(rstarTree.get_root(),0);
-}
 
-int main(){
-    menu2();
     return 0;
 }
