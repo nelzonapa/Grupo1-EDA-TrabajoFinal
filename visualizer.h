@@ -17,6 +17,7 @@ class Visualizer
 public:
     Visualizer();
     void drawPoint(float x, float y, float z);
+    void drawCube(float x, float y, float z, float w, float h, float d);
     void render();
     ~Visualizer();
 
@@ -38,24 +39,25 @@ Visualizer::Visualizer()
     renderWindowInteractor->SetRenderWindow(renderWindow);
     colors = vtkSmartPointer<vtkNamedColors>::New();
 }
-// void Visualizer::drawCube(float x, float y, float z, float size)
-// {
-//     vtkNew<vtkCubeSource> cube;
-//     cube->SetXLength(size);
-//     cube->SetYLength(size);
-//     cube->SetZLength(size);
-//     cube->SetCenter(x, y, z);
+void Visualizer::drawCube(float x, float y, float z, float w, float h, float d)
+{
+    vtkNew<vtkCubeSource> cube;
+    cube->SetXLength(w);
+    cube->SetYLength(h);
+    cube->SetZLength(d);
+    cube->SetCenter(x, y, z);
 
-//     vtkNew<vtkPolyDataMapper> mapper;
-//     mapper->SetInputConnection(cube->GetOutputPort());
+    vtkNew<vtkPolyDataMapper> mapper;
+    mapper->SetInputConnection(cube->GetOutputPort());
 
-//     vtkNew<vtkActor> actor;
-//     actor->SetMapper(mapper);
+    vtkNew<vtkActor> actor;
+    actor->SetMapper(mapper);
 
-//     // Add the actor to the scene
-//     renderer->AddActor(actor);
-// }
+    actor->GetProperty()->SetOpacity(0.3);
 
+    // Add the actor to the scene
+    renderer->AddActor(actor);
+}
 void Visualizer::drawPoint(float x, float y, float z)
 {
     vtkNew<vtkSphereSource> sphere;

@@ -1140,10 +1140,18 @@ public:
             {
                 Node *temp_node = static_cast<Node *>(node->items[i]);
                 cout << string(4 * depth, ' ') << "Branch: Box = [";
-                for (size_t j = 0; j < dimensions; j++)
-                {
-                    cout << "(" << temp_node->box.min_edges[j] << ", " << temp_node->box.max_edges[j] << ") ";
-                }
+                int x, y, z, w, h, d;
+                // for (size_t j = 0; j < dimensions; j++)
+                // {
+                //     cout << "(" << temp_node->box.min_edges[j] << ", " << temp_node->box.max_edges[j] << ") ";
+                // }
+                x = temp_node->box.min_edges[0];
+                y = temp_node->box.min_edges[1];
+                z = temp_node->box.min_edges[2];
+                w = temp_node->box.max_edges[0] - temp_node->box.min_edges[0];
+                h = temp_node->box.max_edges[1] - temp_node->box.min_edges[1];
+                d = temp_node->box.max_edges[2] - temp_node->box.min_edges[2];
+                visualizer->drawCube(x, y, z, w, h, d);
                 cout << "]" << endl;
                 visualize_tree(visualizer, temp_node, depth + 1);
             }
