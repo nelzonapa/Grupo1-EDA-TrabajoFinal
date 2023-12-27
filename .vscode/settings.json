@@ -44,6 +44,13 @@
         "sstream": "cpp",
         "stdexcept": "cpp",
         "streambuf": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "compare": "cpp",
+        "format": "cpp",
+        "optional": "cpp",
+        "valarray": "cpp",
+        "variant": "cpp",
+        "*.inc": "cpp",
+        "*.txx": "cpp"
     }
 }

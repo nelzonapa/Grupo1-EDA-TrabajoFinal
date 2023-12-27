@@ -1,5 +1,6 @@
 #pragma once
 #include <vtkCubeSource.h>
+#include <vtkSphereSource.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
 #include <vtkRenderer.h>
@@ -9,13 +10,13 @@
 #include <vtkCamera.h>
 #include <vtkNew.h>
 #include <vtkProperty.h>
+#include "rstartree.h"
 
 class Visualizer
 {
 public:
     Visualizer();
-    // void visualizeNode(Octree::Node *node);
-    // void visualizeOctree(Octree *octree);
+    void drawPoint(float x, float y, float z);
     void render();
     ~Visualizer();
 
@@ -28,7 +29,8 @@ private:
     vtkSmartPointer<vtkNamedColors> colors;
 };
 
-Visualizer::Visualizer(){
+Visualizer::Visualizer()
+{
     renderer = vtkSmartPointer<vtkRenderer>::New();
     renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
     renderWindow->AddRenderer(renderer);
@@ -36,39 +38,40 @@ Visualizer::Visualizer(){
     renderWindowInteractor->SetRenderWindow(renderWindow);
     colors = vtkSmartPointer<vtkNamedColors>::New();
 }
-
-// void Visualizer::visualizeNode(Octree::Node *node)
+// void Visualizer::drawCube(float x, float y, float z, float size)
 // {
-//     if (!node)
-//         return;
+//     vtkNew<vtkCubeSource> cube;
+//     cube->SetXLength(size);
+//     cube->SetYLength(size);
+//     cube->SetZLength(size);
+//     cube->SetCenter(x, y, z);
 
-//     float cubeSize = figure == 1 ? 10 * size : size;
+//     vtkNew<vtkPolyDataMapper> mapper;
+//     mapper->SetInputConnection(cube->GetOutputPort());
 
-//     vtkSmartPointer<vtkCubeSource> cubeSource = vtkSmartPointer<vtkCubeSource>::New();
-//     cubeSource->SetBounds(
-//         static_cast<double>(node->point.x), static_cast<double>(node->point.x) + cubeSize,
-//         static_cast<double>(node->point.y), static_cast<double>(node->point.y) + cubeSize,
-//         static_cast<double>(node->point.z), static_cast<double>(node->point.z) + cubeSize);
-
-//     vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-//     mapper->SetInputConnection(cubeSource->GetOutputPort());
-
-//     vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+//     vtkNew<vtkActor> actor;
 //     actor->SetMapper(mapper);
-//     actor->GetProperty()->SetColor(colors->GetColor3d("Green").GetData());
 
+//     // Add the actor to the scene
 //     renderer->AddActor(actor);
-
-//     for (int i = 0; i < 8; ++i)
-//     {
-//         visualizeNode(node->children[i]);
-//     }
 // }
 
-// void Visualizer::visualizeOctree(Octree *octree)
-// {
-//     visualizeNode(octree->root);
-// }
+void Visualizer::drawPoint(float x, float y, float z)
+{
+    vtkNew<vtkSphereSource> sphere;
+    sphere->SetRadius(0.1);
+    sphere->SetCenter(x, y, z);
+
+    vtkNew<vtkPolyDataMapper> mapper;
+    mapper->SetInputConnection(sphere->GetOutputPort());
+
+    vtkNew<vtkActor> actor;
+    actor->GetProperty()->SetColor(colors->GetColor3d("Red").GetData());
+    actor->SetMapper(mapper);
+
+    // Add the actor to the scene
+    renderer->AddActor(actor);
+}
 
 void Visualizer::render()
 {
