@@ -1,6 +1,7 @@
 #include "rstartree.h"
 #include <iostream>
 #include <fstream>
+#include <string>
 #include <sstream>
 #include <vector>
 
@@ -33,34 +34,66 @@ RStarBoundingBox<3> createBox3D(int a, int b, int c, int w, int h, int d)
     return box;
 }
 
+bool isValid(int counter){
+    switch(counter){
+        case 1:
+        case 2:
+        case 6:
+        case 8:
+        case 9:
+        case 12:
+        case 13:
+        case 14:
+        case 16:
+        case 18:
+        case 41:
+            return true;
+        default:
+            return false;
+    }
+}
+
 // Función para parsear una línea del archivo CSV b obtener un punto 3D
 Paciente leerCSVLine(const string& line) 
 {
     Paciente caractPaciente;
     stringstream ss(line);
+    vector<string> vectorPalabras;
     string token;
-    getline(ss, token, ',');
-    caractPaciente.a = stod(token);
-    getline(ss, token, ',');
-    caractPaciente.b = stod(token);
-    getline(ss, token, ',');
-    caractPaciente.c = stod(token);
-    getline(ss, token, ',');
-    caractPaciente.d = stod(token);
-    getline(ss, token, ',');
-    caractPaciente.e = stod(token);
-    getline(ss, token, ',');
-    caractPaciente.f = stod(token);
-    getline(ss, token, ',');
-    caractPaciente.g = stod(token);
-    getline(ss, token, ',');
-    caractPaciente.h = stod(token);
-    getline(ss, token, ',');
-    caractPaciente.i = stod(token);
-    getline(ss, token, ',');
-    caractPaciente.j = stod(token);
-    getline(ss, token, ',');
-    caractPaciente.k = stod(token);
+    int counter = -1;
+    while (getline(ss, token, '\"')) {
+        if(counter >= 0){
+            if(token != "," && isValid(counter)){
+                if(token.size() == 0){
+                    vectorPalabras.push_back("0"); 
+                }else{
+                    if(token == "positive"){
+                        vectorPalabras.push_back("1");
+                    }else if(token == "negative"){
+                        vectorPalabras.push_back("0");
+                    }else{
+                        vectorPalabras.push_back(token);
+                    }
+                }
+            }
+            else if(token == ","){
+                counter++;
+            }
+        }else{
+            counter++;
+        }
+    }
+    caractPaciente.a = stod(vectorPalabras[0]);
+    caractPaciente.b = stod(vectorPalabras[1]);
+    caractPaciente.c = stod(vectorPalabras[2]);
+    caractPaciente.d = stod(vectorPalabras[3]);
+    caractPaciente.e = stod(vectorPalabras[4]);
+    caractPaciente.f = stod(vectorPalabras[5]);
+    caractPaciente.g = stod(vectorPalabras[6]);
+    caractPaciente.h = stod(vectorPalabras[7]);
+    caractPaciente.i = stod(vectorPalabras[8]);
+    caractPaciente.j = stod(vectorPalabras[9]);
+    caractPaciente.k = stod(vectorPalabras[10]);
     return caractPaciente;
 }
 
@@ -69,7 +102,7 @@ int main()
     // Crear un árbol R* para puntos 3D
     RStarTree<Paciente, 3, 10, 20> rstarTree; // Dimensiones: 3, Min Child: 10, Max Child: 20
 
-    ifstream file("./Files/covid_DB_datos_importantes_completos_double.csv");
+    ifstream file("./Files/covid_DB.csv");
     string line;
     getline(file, line);
 
