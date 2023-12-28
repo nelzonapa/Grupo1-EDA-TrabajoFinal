@@ -22,8 +22,6 @@ public:
     ~Visualizer();
 
 private:
-    int figure;
-    float size;
     vtkSmartPointer<vtkRenderer> renderer;
     vtkSmartPointer<vtkRenderWindow> renderWindow;
     vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor;
