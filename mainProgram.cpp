@@ -89,10 +89,10 @@ Paciente leerCSVLine(const string& line)
     caractPaciente.d = stod(vectorPalabras[3]);
     caractPaciente.e = stod(vectorPalabras[4]);
     caractPaciente.f = stod(vectorPalabras[5]);
-    caractPaciente.g = stod(vectorPalabras[6]);
+    caractPaciente.g = stod(vectorPalabras[6]); // -
     caractPaciente.h = stod(vectorPalabras[7]);
-    caractPaciente.i = stod(vectorPalabras[8]);
-    caractPaciente.j = stod(vectorPalabras[9]);
+    caractPaciente.i = stod(vectorPalabras[8]); // -
+    caractPaciente.j = stod(vectorPalabras[9]); // -
     caractPaciente.k = stod(vectorPalabras[10]);
     return caractPaciente;
 }
@@ -112,7 +112,7 @@ int main()
 
         //Crear la caja tridimensional alrededor del punto
         //Solo sumamos 1
-        RStarBoundingBox<3> box = createBox3D(caracteristicaPaciente.a, caracteristicaPaciente.b, caracteristicaPaciente.c, 1, 1, 1);
+        RStarBoundingBox<3> box = createBox3D(caracteristicaPaciente.g, caracteristicaPaciente.i, caracteristicaPaciente.j, 1, 1, 1);
 
         rstarTree.insert(caracteristicaPaciente, box);
     }
