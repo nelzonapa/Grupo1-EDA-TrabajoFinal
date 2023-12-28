@@ -86,27 +86,28 @@ int main()
     rstarTree.insert(caracteristicaPaciente, box);
   }
 
-  rstarTree.print_tree((rstarTree.get_root()), 0);
+  // rstarTree.print_tree((rstarTree.get_root()), 0);
 
-  // Eliminacion de datos
-
-  auto box2 = createBox3D(1, 15, 0, 1, 1, 1);
-  rstarTree.delete_objects_in_area(box2);
+  //! Eliminacion de datos
+  // auto box2 = createBox3D(1, 15, 0, 1, 1, 1);
+  // rstarTree.delete_objects_in_area(box2);
   // rstarTree.print_tree((rstarTree.get_root()),0);
 
   // auto box3 = createBox3D(1,15,0,1,3,2);
   // rstarTree.delete_objects_in_area(box3);
   // rstarTree.print_tree((rstarTree.get_root()), 0);
 
+  //* Visualizacion del arbol
   Visualizer *visualizer = new Visualizer();
   rstarTree.visualize_tree(visualizer, rstarTree.get_root(), 0);
   visualizer->render();
 
+  // Busqueda de datos
+  cout << "QUERY" << endl;
   auto areafind = createBox3D(1, 15, 0, 1, 3, 2);
   auto structure_res = rstarTree.find_objects_in_area(areafind);
   for (int i = 0; i < structure_res.size(); i++)
   {
-    cout << "$$$$$$$$" << endl;
     cout << structure_res[i].get_value() << endl;
   }
 
