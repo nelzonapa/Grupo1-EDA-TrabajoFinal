@@ -1121,30 +1121,21 @@ public:
             for (size_t i = 0; i < node->items.size(); i++)
             {
                 Leaf *temp_leaf = static_cast<Leaf *>(node->items[i]);
-                // cout << string(4 * depth, ' ') << "Leaf: Value = " << temp_leaf->value << ", Box = [";
                 for (size_t j = 0; j < dimensions; j++)
                 {
-                    // cout << "(" << temp_leaf->box.min_edges[j] << ", " << temp_leaf->box.max_edges[j] << ") ";
                     int x = temp_leaf->box.min_edges[0];
                     int y = temp_leaf->box.min_edges[1];
                     int z = temp_leaf->box.min_edges[2];
                     visualizer->drawPoint(x, y, z);
                 }
-                cout << "]" << endl;
             }
         }
         else
         {
-            cout << string(4 * depth, ' ') << "Node:" << endl;
             for (size_t i = 0; i < node->items.size(); i++)
             {
                 Node *temp_node = static_cast<Node *>(node->items[i]);
-                cout << string(4 * depth, ' ') << "Branch: Box = [";
                 int x, y, z, w, h, d;
-                // for (size_t j = 0; j < dimensions; j++)
-                // {
-                //     cout << "(" << temp_node->box.min_edges[j] << ", " << temp_node->box.max_edges[j] << ") ";
-                // }
                 x = temp_node->box.min_edges[0];
                 y = temp_node->box.min_edges[1];
                 z = temp_node->box.min_edges[2];
@@ -1152,7 +1143,6 @@ public:
                 h = temp_node->box.max_edges[1] - temp_node->box.min_edges[1];
                 d = temp_node->box.max_edges[2] - temp_node->box.min_edges[2];
                 visualizer->drawCube(x, y, z, w, h, d);
-                cout << "]" << endl;
                 visualize_tree(visualizer, temp_node, depth + 1);
             }
         }

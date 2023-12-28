@@ -42,6 +42,7 @@ Visualizer::Visualizer()
 void Visualizer::drawCube(float x, float y, float z, float w, float h, float d)
 {
     vtkNew<vtkCubeSource> cube;
+    cube->SetCenter(x, y, z);
     cube->SetXLength(w);
     cube->SetYLength(h);
     cube->SetZLength(d);
@@ -53,7 +54,9 @@ void Visualizer::drawCube(float x, float y, float z, float w, float h, float d)
     vtkNew<vtkActor> actor;
     actor->SetMapper(mapper);
 
-    actor->GetProperty()->SetOpacity(0.3);
+    actor->GetProperty()->SetOpacity(0.2);
+    const string colorsArray[] = {"Red", "Green", "Blue", "Yellow", "Cyan", "Magenta"};
+    actor->GetProperty()->SetColor(colors->GetColor3d(colorsArray[rand() % 6]).GetData());
 
     // Add the actor to the scene
     renderer->AddActor(actor);
